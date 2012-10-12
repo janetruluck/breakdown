@@ -1,7 +1,5 @@
 {
-  "company":[
-    "Example Company"
-  ],
+  "company":"Example Company",
   "names":[
     "Jason Truluck",
     "Foo Bar"

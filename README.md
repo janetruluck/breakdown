@@ -37,9 +37,7 @@ This file is used to store the account information for your Github, Pivotal Trac
 This file is used to store the data about your company including company name, names of people, and their email addresses. For example:
 
     {
-      "company":[
-        "Example Company"
-      ],
+      "company":"Example Company",
       "names":[
         "Jason Truluck",
         "Foo Bar"
