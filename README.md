@@ -1,6 +1,5 @@
 ##Breakdown
 
-##About
 Breakdown is a script to send an email with a "breakdown" of some metrics from Pivotal Tracker and Github
 
 ##How to Use
