@@ -28,13 +28,15 @@ PivotalTracker::Client.use_ssl = true
 
 project = PivotalTracker::Project.find(pivotal_project_id)
 
-content = "Generated: #{Time.now}
-           <h3>#{company} Breakdown</h3>
-           <table border='1' cellpadding='5'>
-           <tr><th>Name</th><th>Delivered to You</th><th>In Progress</th><th>Unstarted</th></tr>"
-
 members = project.memberships.all
 emails  = members.collect{ |member| member.email }
+bugs    = project.stories.all(:story_type => 'bug')
+
+content = "Generated: #{Time.now}
+           <h3>#{company} Breakdown</h3>
+           Current Velocity: <b>#{project.current_velocity}</b> | Bugs: <b>#{bugs.count}</b>
+           <table border='1' cellpadding='5'>
+           <tr><th>Name</th><th>Delivered to You</th><th>In Progress</th><th>Unstarted</th></tr>"
 
 members.each do |member|
   delivered = project.stories.all(:requested_by  => member.name,
