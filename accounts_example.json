@@ -1,0 +1,17 @@
+{
+  "company":"Example Company",
+  "pivotal":{
+    "email":"test@example.com",
+    "password":"super_secret",
+    "project_id":"123456"
+  },
+  "gmail":{
+    "email":"test@example.com",
+    "password":"super_secret"
+  },
+  "github":{
+    "email":"test@example.com",
+    "password":"super_secret",
+    "repository":"project/repo"
+  }
+}
