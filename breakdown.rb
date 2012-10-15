@@ -13,13 +13,7 @@ accounts_path = File.join(Dir.pwd, "accounts.json")
 accounts_file = File.read(accounts_path)
 accounts      = JSON.parse(accounts_file)
 
-data_path = File.join(Dir.pwd, "data.json")
-data_file = File.read(data_path)
-data      = JSON.parse(data_file)
-
-emails             = data["emails"]
-people             = data["names"]
-company            = data["company"]
+company            = accounts["company"]
 repository         = accounts["github"]["repository"]
 pivotal_project_id = accounts["pivotal"]["project_id"]
 
@@ -39,14 +33,17 @@ content = "Generated: #{Time.now}
            <table border='1' cellpadding='5'>
            <tr><th>Name</th><th>Delivered to You</th><th>In Progress</th><th>Unstarted</th></tr>"
 
-people.each do |person|
-  delivered = project.stories.all(:requested_by  => person,
-                                :current_state => "delivered").count
-  progress  = project.stories.all(:owned_by => person,
-                                :current_state => "started").count
-  unstarted = project.stories.all(:owned_by => person,
-                                :current_state => "unscheduled").count
-  content += "<tr><td>#{person}</td><td>#{delivered}</td><td>#{progress}</td><td>#{unstarted}</td></tr>"
+members = project.memberships.all
+emails  = members.collect{ |member| member.email }
+
+members.each do |member|
+  delivered = project.stories.all(:requested_by  => member.name,
+                                  :current_state => "delivered").count
+  progress  = project.stories.all(:owned_by => member.name,
+                                  :current_state => "started").count
+  unstarted = project.stories.all(:owned_by => member.name,
+                                  :current_state => "unscheduled").count
+  content += "<tr><td>#{member.name}</td><td>#{delivered}</td><td>#{progress}</td><td>#{unstarted}</td></tr>"
 end
 
 
