@@ -16,6 +16,7 @@ Example files are included in the repo, just modify them to your needs
 This file is used to store the account information for your Github, Pivotal Tracker, and GMail. For example:
 
     {
+      "company":"Example Company"
       "pivotal":{
         "email":"test@example.com",
         "password":"super_secret",
@@ -32,20 +33,4 @@ This file is used to store the account information for your Github, Pivotal Trac
       }
     }
 
-###data.json
-
-This file is used to store the data about your company including company name, names of people, and their email addresses. For example:
-
-    {
-      "company":"Example Company",
-      "names":[
-        "Jason Truluck",
-        "Foo Bar"
-      ],
-      "emails":[
-        "test@example.com",
-        "test2@example.com"
-      ]
-    }
-
-Updated: October 12, 2012
+Updated: October 15, 2012
