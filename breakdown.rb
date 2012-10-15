@@ -82,7 +82,7 @@ pulls.each do |pull|
 
 
   content += "<tr>
-                  <td><a href='#{pull.url}'>#{pull.title}</a></td>
+                  <td><a href='#{pull._links.html}'>#{pull.title}</a></td>
                   <td>%d days, %d hours, %d minutes and %d seconds</td>
                   <td>#{2 - plus_one_counter}</td>
               </tr>" % [dd, hh, mm, ss]
