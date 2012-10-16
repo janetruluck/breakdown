@@ -28,26 +28,42 @@ PivotalTracker::Client.use_ssl = true
 
 project = PivotalTracker::Project.find(pivotal_project_id)
 
-members = project.memberships.all
-emails  = members.collect{ |member| member.email }
-bugs    = project.stories.all(:story_type => 'bug')
+member_info    = Hash.new
+members        = project.memberships.all
+emails         = members.collect{ |member| member.email if member.role == "Member" || member.role == "Owner" }.compact
+bugs           = project.stories.all(:story_type => 'bug')
+backlog        = project.stories.all(:current_state => 'unstarted')
+backlog_points = backlog.collect{ |story| story.estimate.to_i }.inject{ |sum, n| sum + n }
 
 content = "Generated: #{Time.now}
            <h3>#{company} Breakdown</h3>
-           Current Velocity: <b>#{project.current_velocity}</b> | Bugs: <b>#{bugs.count}</b>
+           Current Velocity: <b>#{project.current_velocity}</b> | Points in Backlog: <b>#{backlog_points}</b> | Bugs: <b>#{bugs.count}</b>
            <table border='1' cellpadding='5'>
            <tr><th>Name</th><th>Delivered to You</th><th>In Progress</th><th>Unstarted</th></tr>"
 
+
 members.each do |member|
-  delivered = project.stories.all(:requested_by  => member.name,
-                                  :current_state => "delivered").count
-  progress  = project.stories.all(:owned_by => member.name,
-                                  :current_state => "started").count
-  unstarted = project.stories.all(:owned_by => member.name,
-                                  :current_state => "unscheduled").count
-  content += "<tr><td>#{member.name}</td><td>#{delivered}</td><td>#{progress}</td><td>#{unstarted}</td></tr>"
+  if member.role == "Member" || member.role == "Owner"
+    delivered = project.stories.all(:requested_by  => member.name,
+                                    :current_state => "delivered").count
+    progress  = project.stories.all(:owned_by => member.name,
+                                    :current_state => "started").count
+    unstarted = project.stories.all(:owned_by => member.name,
+                                    :current_state => "unscheduled").count
+
+    current   = "<tr><td>#{member.name}</td><td>#{delivered}</td><td>#{progress}</td><td>#{unstarted}</td></tr>"
+
+    total     = delivered + progress + unstarted
+
+    member_info["#{member.name}"] = { :total => total, :content => current}
+  end
 end
 
+member_info = member_info.sort_by{ |key, val| val[:total] }.reverse
+
+member_info.each do |key, val|
+  content += val[:content]
+end
 
 content += "</table>"
 content += "Note: If you have 0's in all columns than either your name is spelled wrong or your work is not being tracked. Please let me know if either is the case!"
@@ -81,7 +97,7 @@ pulls.each do |pull|
 
 
   content += "<tr>
-                  <td><a href='#{pull._links.html}'>#{pull.title}</a></td>
+                  <td><a href='#{pull._links.html.href}'>#{pull.title}</a></td>
                   <td>%d days, %d hours, %d minutes and %d seconds</td>
                   <td>#{2 - plus_one_counter}</td>
               </tr>" % [dd, hh, mm, ss]
